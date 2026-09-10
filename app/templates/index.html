@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Problems - LLD Practice{% endblock %}
+{% block content %}
+  <h1>Practice Problems</h1>
+  <p class="subtitle">Pick a problem, design a solution, submit it, and get feedback.</p>
+  <div class="card-list">
+    {% for p in problems %}
+      <a class="card" href="/problems/{{ p.slug }}">
+        <div class="card-title-row">
+          <h2>{{ p.title }}</h2>
+          <span class="badge badge-{{ p.difficulty }}">{{ p.difficulty }}</span>
+        </div>
+        <p>{{ p.description[:140] }}{% if p.description|length > 140 %}...{% endif %}</p>
+      </a>
+    {% endfor %}
+  </div>
+{% endblock %}

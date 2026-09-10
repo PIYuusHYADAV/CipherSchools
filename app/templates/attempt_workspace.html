@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Attempt #{{ attempt.id }} - {{ problem.title }}{% endblock %}
+{% block content %}
+  <a href="/problems/{{ problem.slug }}" class="back-link">&larr; {{ problem.title }}</a>
+  <h1>Design your solution</h1>
+  <p class="subtitle">Attempt #{{ attempt.id }} &middot; status: {{ attempt.status }}</p>
+
+  <details class="requirements-recap" open>
+    <summary>Requirements recap</summary>
+    <ul>
+      {% for r in problem.requirements %}<li>{{ r }}</li>{% endfor %}
+    </ul>
+  </details>
+
+  <form method="post" action="/attempts/{{ attempt.id }}/submit" id="submit-form">
+    <section class="workspace-section">
+      <div class="section-header">
+        <h3>Classes / Interfaces</h3>
+        <button type="button" class="btn btn-secondary btn-small" onclick="addClassRow()">+ Add class</button>
+      </div>
+      <div id="classes-container"></div>
+    </section>
+
+    <section class="workspace-section">
+      <div class="section-header">
+        <h3>Relationships</h3>
+        <button type="button" class="btn btn-secondary btn-small" onclick="addRelationshipRow()">+ Add relationship</button>
+      </div>
+      <div id="relationships-container"></div>
+    </section>
+
+    <section class="workspace-section">
+      <h3>Code / pseudo-code (optional)</h3>
+      <p class="hint">Paste real code, pseudo-code, or extra notes here. Not required if your classes above are detailed enough.</p>
+      <textarea name="code" id="code-textarea" rows="10" placeholder="class ParkingSpot:&#10;    ...">{{ attempt.draft_code or "" }}</textarea>
+    </section>
+
+    <input type="hidden" name="classes_json" id="classes_json">
+    <input type="hidden" name="relationships_json" id="relationships_json">
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" onclick="return serializeBeforeSubmit()">Submit for feedback</button>
+    </div>
+  </form>
+
+  <script>
+    const initialClasses = {{ classes_json|safe }};
+    const initialRelationships = {{ relationships_json|safe }};
+  </script>
+  <script src="/static/workspace.js"></script>
+{% endblock %}

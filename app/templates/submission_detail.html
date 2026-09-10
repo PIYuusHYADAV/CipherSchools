@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Submission #{{ submission.id }}{% endblock %}
+{% block content %}
+  <a href="/problems/{{ problem.slug }}" class="back-link">&larr; {{ problem.title }}</a>
+  <h1>Submission #{{ submission.id }}</h1>
+  <p class="subtitle">
+    Status: <span class="status status-{{ submission.status }}">{{ submission.status }}</span>
+    {% if submission.score is not none %} &middot; Score: <strong>{{ submission.score }}/100</strong>{% endif %}
+  </p>
+
+  {% if submission.status == "failed" %}
+    <div class="error-box">
+      <p><strong>Evaluation failed:</strong> {{ submission.error_message }}</p>
+      <form method="post" action="/submissions/{{ submission.id }}/retry">
+        <button type="submit" class="btn btn-primary">Retry evaluation</button>
+      </form>
+    </div>
+  {% endif %}
+
+  {% if submission.status == "completed" %}
+    <section class="workspace-section">
+      <h3>Checklist</h3>
+      <ul class="checklist">
+        {% for item in submission.checklist %}
+          <li class="{{ 'check-pass' if item.passed else 'check-fail' }}">
+            <span class="check-icon">{{ "✓" if item.passed else "✗" }}</span>
+            <div>
+              <strong>{{ item.label }}</strong>
+              <p>{{ item.detail }}</p>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="workspace-section">
+      <h3>Feedback</h3>
+      <div class="narrative-feedback">{{ submission.narrative_feedback }}</div>
+    </section>
+  {% endif %}
+
+  <div class="actions">
+    <a href="/attempts/{{ submission.attempt_id }}" class="btn btn-secondary">Back to attempt</a>
+    <form method="post" action="/problems/{{ problem.slug }}/attempts">
+      <button type="submit" class="btn btn-primary">Try again (new attempt)</button>
+    </form>
+  </div>
+{% endblock %}

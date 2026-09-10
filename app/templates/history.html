@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}History - {{ problem.title }}{% endblock %}
+{% block content %}
+  <a href="/problems/{{ problem.slug }}" class="back-link">&larr; {{ problem.title }}</a>
+  <h1>Attempt history</h1>
+  <p class="subtitle">{{ problem.title }}</p>
+
+  {% if not attempts %}
+    <p>No attempts yet.</p>
+  {% endif %}
+
+  <div class="card-list">
+    {% for a in attempts %}
+      <div class="card static-card">
+        <div class="card-title-row">
+          <h2>Attempt #{{ a.id }}</h2>
+          <span class="badge">{{ a.status }}</span>
+        </div>
+        <p>{{ a.created_at.strftime("%b %d, %Y %H:%M") }}</p>
+        <a href="/attempts/{{ a.id }}" class="btn btn-secondary btn-small">Open attempt</a>
+        {% if a.submissions %}
+          <ul class="plain-list">
+            {% for s in a.submissions|sort(attribute='created_at', reverse=True) %}
+              <li>
+                <a href="/submissions/{{ s.id }}">Submission #{{ s.id }}</a>
+                — {{ s.status }}{% if s.score is not none %} — {{ s.score }}/100{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
